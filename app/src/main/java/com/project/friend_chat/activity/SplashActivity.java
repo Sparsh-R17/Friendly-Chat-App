@@ -1,10 +1,10 @@
 package com.project.friend_chat.activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.project.friend_chat.R;
 import com.project.friend_chat.model.UserModel;
@@ -19,7 +19,6 @@ public class SplashActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splash);
 
         if(getIntent().getExtras()!=null){
-            //from notification
             String userId = getIntent().getExtras().getString("userId");
             FirebaseUtil.allUserCollectionReference().document(userId).get()
                     .addOnCompleteListener(task -> {
@@ -37,19 +36,14 @@ public class SplashActivity extends AppCompatActivity {
                             finish();
                         }
                     });
-
-
         }else{
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if(FirebaseUtil.isLoggedIn()){
-                        startActivity(new Intent(SplashActivity.this,MainActivity.class));
-                    }else{
-                        startActivity(new Intent(SplashActivity.this, LoginPhoneNumberActivity.class));
-                    }
-                    finish();
+            new Handler().postDelayed(() -> {
+                if(FirebaseUtil.isLoggedIn()){
+                    startActivity(new Intent(SplashActivity.this,MainActivity.class));
+                }else{
+                    startActivity(new Intent(SplashActivity.this, LoginPhoneNumberActivity.class));
                 }
+                finish();
             },1000);
         }
     }

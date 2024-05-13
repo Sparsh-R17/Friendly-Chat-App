@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace 'com.project.friend_chat'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.project.friend_chat"
@@ -15,6 +15,15 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    //Option Added for building apks
+    packagingOptions {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            merges += "META-INF/LICENSE.md"
+            merges += "META-INF/LICENSE-notice.md"
+        }
     }
 
     buildTypes {
@@ -38,15 +47,27 @@ dependencies {
     implementation 'com.google.firebase:firebase-storage-ktx:20.1.0'
     implementation 'com.google.firebase:firebase-messaging-ktx:23.1.2'
     testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+
+    //Country Code Picker
     implementation 'com.hbb20:ccp:2.5.0'
 
     implementation platform('com.google.firebase:firebase-bom:31.3.0')
     implementation 'com.google.firebase:firebase-auth'
     implementation 'com.firebaseui:firebase-ui-firestore:8.0.2'
+
+    //Image Picker
     implementation 'com.github.dhaval2404:imagepicker:2.1'
+
+    //Image Loading
     implementation 'com.github.bumptech.glide:glide:4.15.1'
+
+    //Network
     implementation("com.squareup.okhttp3:okhttp:4.10.0")
+
+    //Testing JUnit
+    androidTestImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
 
 }

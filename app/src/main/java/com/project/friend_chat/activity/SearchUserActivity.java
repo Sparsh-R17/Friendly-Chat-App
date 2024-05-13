@@ -1,19 +1,19 @@
 package com.project.friend_chat.activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.firebase.firestore.Query;
 import com.project.friend_chat.R;
 import com.project.friend_chat.adapter.SearchUserRecyclerAdapter;
 import com.project.friend_chat.model.UserModel;
 import com.project.friend_chat.utils.FirebaseUtil;
-import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.firebase.firestore.Query;
 
 public class SearchUserActivity extends AppCompatActivity {
 
@@ -37,9 +37,7 @@ public class SearchUserActivity extends AppCompatActivity {
         searchInput.requestFocus();
 
 
-        backButton.setOnClickListener(v -> {
-            onBackPressed();
-        });
+        backButton.setOnClickListener(v -> onBackPressed());
 
         searchButton.setOnClickListener(v -> {
             String searchTerm = searchInput.getText().toString();

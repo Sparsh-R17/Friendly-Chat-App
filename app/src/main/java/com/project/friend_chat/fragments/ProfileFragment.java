@@ -4,13 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,18 +13,18 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
+import com.github.dhaval2404.imagepicker.ImagePicker;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.project.friend_chat.R;
 import com.project.friend_chat.activity.SplashActivity;
 import com.project.friend_chat.model.UserModel;
 import com.project.friend_chat.utils.AndroidUtil;
 import com.project.friend_chat.utils.FirebaseUtil;
-import com.github.dhaval2404.imagepicker.ImagePicker;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.messaging.FirebaseMessaging;
-
-import kotlin.Unit;
-import kotlin.jvm.functions.Function1;
 
 public class ProfileFragment extends Fragment {
 
@@ -62,13 +55,11 @@ public class ProfileFragment extends Fragment {
                             AndroidUtil.setProfilePic(getContext(),selectedImageUri,profilePic);
                         }
                     }
-                }
-                );
+                });
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view =  inflater.inflate(R.layout.fragment_profile, container, false);
         profilePic = view.findViewById(R.id.profile_image_view);
         usernameInput = view.findViewById(R.id.profile_username);
@@ -79,28 +70,22 @@ public class ProfileFragment extends Fragment {
 
         getUserData();
 
-        updateProfileBtn.setOnClickListener((v -> {
-            updateBtnClick();
+        updateProfileBtn.setOnClickListener((v -> updateBtnClick()));
+
+        logoutBtn.setOnClickListener((v)-> FirebaseMessaging.getInstance().deleteToken().addOnCompleteListener(task -> {
+            if(task.isSuccessful()){
+                FirebaseUtil.logout();
+                Intent intent = new Intent(getContext(), SplashActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+            }
         }));
 
-        logoutBtn.setOnClickListener((v)->{
-            FirebaseMessaging.getInstance().deleteToken().addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    if(task.isSuccessful()){
-                        FirebaseUtil.logout();
-                        Intent intent = new Intent(getContext(), SplashActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        startActivity(intent);
-                    }
-                }
-            });
-
-
-
-        });
-
-        profilePic.setOnClickListener((v)-> ImagePicker.with(this).cropSquare().compress(512).maxResultSize(512,512)
+        profilePic.setOnClickListener((v)-> ImagePicker
+                .with(this)
+                .cropSquare()
+                .compress(512)
+                .maxResultSize(512,512)
                 .createIntent(intent -> {
                     imagePickLauncher.launch(intent);
                     return null;
@@ -126,10 +111,6 @@ public class ProfileFragment extends Fragment {
             updateToFirestore();
         }
 
-
-
-
-
     }
 
     void updateToFirestore(){
@@ -148,7 +129,6 @@ public class ProfileFragment extends Fragment {
 
     void getUserData(){
         setInProgress(true);
-
         FirebaseUtil.getCurrentProfilePicStorageRef().getDownloadUrl()
                         .addOnCompleteListener(task -> {
                                 if(task.isSuccessful()){

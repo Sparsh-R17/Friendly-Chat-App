@@ -1,8 +1,5 @@
 package com.project.friend_chat.activity;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -11,16 +8,16 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.project.friend_chat.R;
-import com.project.friend_chat.utils.AndroidUtil;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.firebase.FirebaseException;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
+import com.project.friend_chat.R;
+import com.project.friend_chat.utils.AndroidUtil;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -59,9 +56,7 @@ public class LoginOtpActivity extends AppCompatActivity {
            signIn(credential);
         });
 
-        resendOtpTextView.setOnClickListener((v)->{
-            sendOtp(phoneNumber,true);
-        });
+        resendOtpTextView.setOnClickListener((v)-> sendOtp(phoneNumber,true));
 
     }
 
@@ -116,17 +111,14 @@ public class LoginOtpActivity extends AppCompatActivity {
     void signIn(PhoneAuthCredential phoneAuthCredential){
         //login and go to next activity
         setInProgress(true);
-        mAuth.signInWithCredential(phoneAuthCredential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                setInProgress(false);
-                if(task.isSuccessful()){
-                    Intent intent = new Intent(LoginOtpActivity.this, LoginUsernameActivity.class);
-                    intent.putExtra("phone",phoneNumber);
-                    startActivity(intent);
-                }else{
-                    AndroidUtil.showToast(getApplicationContext(),"OTP verification failed");
-                }
+        mAuth.signInWithCredential(phoneAuthCredential).addOnCompleteListener(task -> {
+            setInProgress(false);
+            if(task.isSuccessful()){
+                Intent intent = new Intent(LoginOtpActivity.this, LoginUsernameActivity.class);
+                intent.putExtra("phone",phoneNumber);
+                startActivity(intent);
+            }else{
+                AndroidUtil.showToast(getApplicationContext(),"OTP verification failed");
             }
         });
 
@@ -136,7 +128,7 @@ public class LoginOtpActivity extends AppCompatActivity {
     void startResendTimer(){
         resendOtpTextView.setEnabled(false);
         Timer timer = new Timer();
-        timer.scheduleAtFixedRate(new TimerTask() {
+        timer.schedule(new TimerTask() {
             @Override
             public void run() {
                 timeoutSeconds--;
@@ -144,9 +136,7 @@ public class LoginOtpActivity extends AppCompatActivity {
                 if(timeoutSeconds<=0){
                     timeoutSeconds =60L;
                     timer.cancel();
-                    runOnUiThread(() -> {
-                        resendOtpTextView.setEnabled(true);
-                    });
+                    runOnUiThread(() -> resendOtpTextView.setEnabled(true));
                 }
             }
         },0,1000);
